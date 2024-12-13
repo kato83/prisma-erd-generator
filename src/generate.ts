@@ -78,6 +78,7 @@ function renderDml(dml: DML, options?: DMLRendererOptions) {
         ignoreEnums = false,
         includeRelationFromFields = false,
         disableEmoji = false,
+        withComment = false,
     } = options ?? {};
 
     const diagram = 'erDiagram';
@@ -104,31 +105,40 @@ function renderDml(dml: DML, options?: DMLRendererOptions) {
                   )
                   .join('\n\n');
 
-    const pkSigil = disableEmoji ? '"PK"' : '"🗝️"';
-    const nullableSigil = disableEmoji ? '"nullable"' : '"❓"';
+    const generatingAttributeKeysAndComments = (isPk: boolean, isNullable: boolean, commentTxt?: string) => {
+        const result = [];
+        const comment = [];
+        if (disableEmoji && isPk) {
+            result.push('PK')
+        } else if (isPk) {
+            comment.push('🗝️');
+        }
+        if (isNullable) {
+            comment.push(disableEmoji ? 'nullable' : '❓')
+        }
+        if (commentTxt) {
+            comment.push(commentTxt);
+        }
+        result.push(`"${comment.join(' ')}"`);
+        return result.join(' ');
+    };
     const classes = modellikes
         .map(
             (model) =>
                 `  "${model.dbName || model.name}" {
-${
-    tableOnly
-        ? ''
-        : model.fields
-              .filter(isFieldShownInSchema(model, includeRelationFromFields))
-              // the replace is a hack to make MongoDB style ID columns like _id valid for Mermaid
-              .map((field) => {
-                  return `    ${field.type.trimStart()} ${field.name.replace(
-                      /^_/,
-                      'z_'
-                  )} ${
-                      field.isId ||
-                      model.primaryKey?.fields?.includes(field.name)
-                          ? pkSigil
-                          : ''
-                  }${field.isRequired ? '' : nullableSigil}`;
-              })
-              .join('\n')
-}
+${tableOnly
+                    ? ''
+                    : model.fields
+                        .filter(isFieldShownInSchema(model, includeRelationFromFields))
+                        // the replace is a hack to make MongoDB style ID columns like _id valid for Mermaid
+                        .map((field) => {
+                            return `    ${field.type.trimStart()} ${field.name.replace(
+                                /^_/,
+                                'z_'
+                            )} ${generatingAttributeKeysAndComments(field.isId || model.primaryKey?.fields?.includes(field.name) || false, field.isRequired, field.documentation)}`;
+                        })
+                        .join('\n')
+                }
     }
   `
         )

@@ -18,6 +18,7 @@ export interface DMLRendererOptions {
     ignoreEnums?: boolean;
     includeRelationFromFields?: boolean;
     disableEmoji?: boolean;
+    withComment?: boolean;
 }
 
 // Copy paste of the DMLModel
@@ -51,6 +52,7 @@ export interface DMLField {
     type: string;
     relationFromFields?: any[];
     relationName?: string;
+    documentation?: string;
     relationOnDelete?: string;
     relationToFields?: any[];
 }
