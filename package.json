@@ -20,7 +20,7 @@
         "standard-version": "standard-version",
         "update-deps": "npx npm-check-updates -i"
     },
-    "name": "prisma-erd-generator",
+    "name": "@kato83/prisma-erd-generator",
     "author": "John Fay",
     "repository": {
         "type": "git",
@@ -94,6 +94,10 @@
         {
             "url": "https://github.com/bcanfield",
             "name": "Brandin Canfield"
+        },
+        {
+            "url": "https://github.com/kato83",
+            "name": "Yuki Kato"
         }
     ],
     "devDependencies": {
