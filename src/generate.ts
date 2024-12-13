@@ -105,7 +105,7 @@ function renderDml(dml: DML, options?: DMLRendererOptions) {
                   )
                   .join('\n\n');
 
-    const generatingAttributeKeysAndComments = (isPk: boolean, isNullable: boolean, commentTxt?: string) => {
+    const generatingAttributeKeysAndComments = (isPk: boolean, isRequired: boolean, commentTxt?: string) => {
         const result = [];
         const comment = [];
         if (disableEmoji && isPk) {
@@ -113,7 +113,7 @@ function renderDml(dml: DML, options?: DMLRendererOptions) {
         } else if (isPk) {
             comment.push('🗝️');
         }
-        if (isNullable) {
+        if (!isRequired) {
             comment.push(disableEmoji ? 'nullable' : '❓')
         }
         if (commentTxt) {
